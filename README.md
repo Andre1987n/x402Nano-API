@@ -30,6 +30,9 @@ Welcome to the x402 Nano API documentation. This API provides a secure, easy-to-
 - Send Nano to any address
 - Receive pending transactions automatically
 - Real-time balance queries
+- AI agent payment requests (create/pay/status)
+- Long-polling payment confirmation (30s timeout)
+- Auto-expiring transactions (60 minutes)
 
 ✅ **Security First**
 - AES-256 wallet encryption
@@ -93,6 +96,31 @@ curl -X POST https://api.x402nano.com/send \
     "to_address": "nano_destination_address",
     "amount": "0.1"
   }'
+
+# 7. AI Agent Payment Flow
+# Create transaction (AI agent requests payment)
+curl -X POST https://api.x402nano.com/transaction/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "receive_address": "nano_your_server_address",
+    "amount": "0.1"
+  }'
+# Returns: {"transaction_id": "550e8400-...", "amount": "0.1", ...}
+
+# User pays transaction
+curl -X POST https://api.x402nano.com/transaction/pay \
+  -H "Content-Type: application/json" \
+  -d '{
+    "transaction_id": "550e8400-...",
+    "encrypted_wallet_string": "YOUR_ENCRYPTED_WALLET",
+    "password": "SecurePassword123!",
+    "amount": "0.1"
+  }'
+
+# Check payment status (long-polling up to 30s)
+curl -X POST https://api.x402nano.com/transaction/status/550e8400-... \
+  -H "Content-Type: application/json"
+# Returns: {"is_paid": true, "message": "Transaction has been paid.", ...}
 ```
 
 ## 📋 Available Endpoints
@@ -106,6 +134,9 @@ curl -X POST https://api.x402nano.com/send \
 | `/balance/{address}` | POST | Get address balance |
 | `/receive` | POST | Receive pending transactions |
 | `/send` | POST | Send Nano transaction |
+| `/transaction/create` | POST | Create payment transaction (AI agents) |
+| `/transaction/pay` | POST | Pay pending transaction |
+| `/transaction/status/{id}` | POST | Check transaction payment status |
 
 ## 🔒 Security
 
