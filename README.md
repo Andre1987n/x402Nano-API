@@ -143,6 +143,7 @@ curl -X POST https://api.x402nano.com/transaction/status/550e8400-... \
 | `/balance/{address}` | POST | Get address balance |
 | `/receive` | POST | Receive pending transactions |
 | `/send` | POST | Send Nano transaction |
+| `/donate` | POST | Donate to support API development |
 | `/transaction/create` | POST | Create payment transaction (AI agents) |
 | `/transaction/pay` | POST | Pay pending transaction |
 | `/transaction/status/{id}` | POST | Check transaction payment status |
