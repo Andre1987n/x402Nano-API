@@ -19,6 +19,13 @@ Welcome to the x402 Nano API documentation. This API provides a secure, easy-to-
 - **[Quick Start Guide](QUICK_START.md)** - Get up and running in 5 minutes
 - **[API Documentation](API_DOCUMENTATION.md)** - Complete API reference
 
+### OpenAPI Specification
+- **[openapi-schema.yaml](openapi-schema.yaml)** - Machine-readable API specification
+  - Use this schema to integrate with OpenAPI-compatible tools
+  - Import into Postman, Insomnia, or Swagger UI for testing
+  - Generate client libraries in your preferred language
+  - Perfect for AI agents and automated API integration
+
 ### Key Features
 
 ✅ **Wallet Management**

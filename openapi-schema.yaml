@@ -1,0 +1,479 @@
+openapi: 3.1.0
+info:
+  title: x402 Nano API
+  description: Secure Nano cryptocurrency wallet management API
+  version: 1.0.0
+  contact:
+    url: https://github.com/Andre1987n/x402Nano-API
+
+servers:
+  - url: https://api.x402nano.com
+    description: Production server
+
+paths:
+  /api/key/create:
+    post:
+      summary: Create AI API Key
+      description: Generate a new API key for wallet operations
+      operationId: createApiKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: API key created successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: CZtYHgn0Nk8KPvtlkwARjF+m601hC00pqYQwzXaKixU=
+
+  /wallet/create:
+    post:
+      summary: Create New Wallet
+      description: Create a new encrypted Nano wallet with password protection and optional email backup
+      operationId: createWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - password_confirmation
+                - api_key
+              properties:
+                password:
+                  type: string
+                  description: Must contain uppercase and special character
+                  example: SecurePassword123!
+                password_confirmation:
+                  type: string
+                  description: Must match password
+                  example: SecurePassword123!
+                email:
+                  type: string
+                  format: email
+                  description: Optional - Email address for wallet backup
+                  example: user@example.com
+                api_key:
+                  type: string
+                  description: API key from /api/key/create
+                  example: CZtYHgn0Nk8KPvtlkwARjF+m601hC00pqYQwzXaKixU=
+      responses:
+        '200':
+          description: Wallet created successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Base64 encoded encrypted wallet string
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /wallet/unlock:
+    post:
+      summary: Unlock Wallet
+      description: Decrypt wallet to access address and keys
+      operationId: unlockWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - encrypted_wallet_string
+                - password
+              properties:
+                encrypted_wallet_string:
+                  type: string
+                  description: Encrypted wallet from /wallet/create
+                password:
+                  type: string
+                  description: Wallet password
+      responses:
+        '200':
+          description: Wallet unlocked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_index:
+                    type: integer
+                  address:
+                    type: string
+                    example: nano_3eeir3bktrejgzqecwbk9i9nocefpm1gy39tniihffkeu3egendug79s1e4k
+                  public_key:
+                    type: string
+                  private_key:
+                    type: string
+                  wallet_private_seed:
+                    type: string
+                  ai_api_key:
+                    type: string
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /wallet/import:
+    post:
+      summary: Import Wallet from Seed
+      description: Import existing wallet using private seed
+      operationId: importWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - private_wallet_seed
+                - password
+                - password_confirmation
+                - api_key
+              properties:
+                private_wallet_seed:
+                  type: string
+                  description: 64-character hex seed
+                password:
+                  type: string
+                password_confirmation:
+                  type: string
+                api_key:
+                  type: string
+      responses:
+        '200':
+          description: Wallet imported successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /balance/{address}:
+    post:
+      summary: Get Balance
+      description: Check balance for a Nano address
+      operationId: getBalance
+      parameters:
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Nano address (nano_ or xrb_)
+          example: nano_3eeir3bktrejgzqecwbk9i9nocefpm1gy39tniihffkeu3egendug79s1e4k
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: Balance retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: string
+                    description: Balance in NANO
+                    example: "1.5"
+                  balance_raw:
+                    type: string
+                    description: Balance in raw units
+                  pending:
+                    type: string
+                    description: Pending amount in NANO
+
+  /receive:
+    post:
+      summary: Receive Pending Transactions
+      description: Process all pending incoming transactions
+      operationId: receivePending
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - encrypted_wallet_string
+                - password
+              properties:
+                encrypted_wallet_string:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Transactions received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  received:
+                    type: string
+                    description: Amount received
+                  new_balance:
+                    type: string
+                    description: New total balance
+                  received_from:
+                    type: string
+                    description: Sender address
+
+  /send:
+    post:
+      summary: Send Nano Transaction
+      description: Send Nano to another address
+      operationId: sendNano
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - encrypted_wallet_string
+                - password
+                - to_address
+                - amount
+              properties:
+                encrypted_wallet_string:
+                  type: string
+                password:
+                  type: string
+                to_address:
+                  type: string
+                  description: Destination Nano address
+                  example: nano_1ebhjnii43rx9fs41njqam86q9uwgcfbap18beoyrpheekw7wniu9e3g6rb3
+                amount:
+                  type: string
+                  description: Amount in NANO
+                  example: "0.1"
+      responses:
+        '200':
+          description: Transaction sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  send_to:
+                    type: string
+                  ammount:
+                    type: string
+        '400':
+          description: Transaction failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /donate:
+    post:
+      summary: Donate to Support Development
+      description: Donate Nano to support the x402 Nano API development and maintenance
+      operationId: donate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - encrypted_wallet_string
+                - password
+                - amount
+              properties:
+                encrypted_wallet_string:
+                  type: string
+                  description: Encrypted wallet data from wallet creation/unlock
+                password:
+                  type: string
+                  description: Wallet password for decryption and signing
+                amount:
+                  type: string
+                  description: Donation amount in NANO
+                  example: "0.5"
+      responses:
+        '200':
+          description: Donation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Thank you for your donation!"
+        '400':
+          description: Donation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /transaction/create:
+    post:
+      summary: Create Payment Transaction
+      description: Create a temporary payment request (AI agent use case)
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - receive_address
+                - amount
+              properties:
+                receive_address:
+                  type: string
+                  description: Address to receive payment
+                  example: nano_1j3m7cyn8wpc7qif9iymxdfwxrnfa6xgkriysp45by1wudwe8gcxp83fm7ow
+                amount:
+                  type: string
+                  description: Amount in NANO
+                  example: "0.1"
+      responses:
+        '200':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction_id:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  receive_address:
+                    type: string
+                  amount:
+                    type: string
+
+  /transaction/pay:
+    post:
+      summary: Pay Transaction
+      description: Pay a previously created transaction
+      operationId: payTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - transaction_id
+                - encrypted_wallet_string
+                - password
+                - amount
+              properties:
+                transaction_id:
+                  type: string
+                  format: uuid
+                  example: 550e8400-e29b-41d4-a716-446655440000
+                encrypted_wallet_string:
+                  type: string
+                password:
+                  type: string
+                amount:
+                  type: string
+                  example: "0.1"
+      responses:
+        '200':
+          description: Payment successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  transaction_id:
+                    type: string
+                  to_address:
+                    type: string
+                  amount:
+                    type: string
+        '400':
+          description: Payment failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /transaction/status/{transaction_id}:
+    post:
+      summary: Get Transaction Status
+      description: Check if transaction has been paid (30s long-polling)
+      operationId: getTransactionStatus
+      parameters:
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: Status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  message:
+                    type: string
+                  transaction_id:
+                    type: string
+                  is_paid:
+                    type: boolean
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: weak_password
+        message:
+          type: string
+          example: Password must contain at least one uppercase letter
