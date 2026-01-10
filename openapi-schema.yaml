@@ -63,7 +63,7 @@ paths:
                   example: user@example.com
                 api_key:
                   type: string
-                  description: API key from /api/key/create
+                  description: API key from /key/create
                   example: CZtYHgn0Nk8KPvtlkwARjF+m601hC00pqYQwzXaKixU=
       responses:
         '200':

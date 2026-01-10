@@ -79,7 +79,7 @@ Welcome to the x402 Nano API documentation. This API provides a secure, easy-to-
 
 ```bash
 # 1. Create an API key
-curl -X POST https://api.x402nano.com/api/key/create \
+curl -X POST https://api.x402nano.com/key/create \
   -H "Content-Type: application/json" \
   -d '{}'
 # Returns: CZtYHgn0Nk8KPvtlkwARjF+m601hC00pqYQwzXaKixU=
@@ -157,7 +157,7 @@ curl -X POST https://api.x402nano.com/transaction/status/550e8400-... \
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/key/create` | POST | Generate API key |
+| `/key/create` | POST | Generate API key |
 | `/wallet/create` | POST | Create new wallet |
 | `/wallet/import` | POST | Import wallet from seed |
 | `/wallet/unlock` | POST | Unlock encrypted wallet |

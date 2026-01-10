@@ -27,7 +27,7 @@ This guide will help you get started with the x402 Nano API in minutes.
 First, create an API key:
 
 ```bash
-curl -X POST https://api.x402nano.com/api/key/create \
+curl -X POST https://api.x402nano.com/key/create \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -257,7 +257,7 @@ BASE_URL = "https://api.x402nano.com"
 
 # 1. Create API Key
 response = requests.post(
-    f"{BASE_URL}/api/key/create",
+    f"{BASE_URL}/key/create",
     headers={"Content-Type": "application/json"},
     json={}
 )
@@ -309,7 +309,7 @@ const BASE_URL = 'https://api.x402nano.com';
 async function quickStart() {
     // 1. Create API Key
     const keyResponse = await axios.post(
-        `${BASE_URL}/api/key/create`,
+        `${BASE_URL}/key/create`,
         {},
         { headers: { 'Content-Type': 'application/json' } }
     );

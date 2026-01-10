@@ -848,7 +848,7 @@ def create_api_key():
     }
     
     response = requests.post(
-        f"{BASE_URL}/api/key/create",
+        f"{BASE_URL}/key/create",
         headers=headers,
         json={}
     )
@@ -943,7 +943,7 @@ async function createApiKey() {
     };
     
     const response = await axios.post(
-        `${BASE_URL}/api/key/create`,
+        `${BASE_URL}/key/create`,
         {},
         { headers }
     );
