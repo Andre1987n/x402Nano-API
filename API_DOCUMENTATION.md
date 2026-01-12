@@ -564,10 +564,21 @@ Create a temporary payment transaction for users to pay. Returns a unique transa
 ```json
 {
   "receive_address": "nano_1your_server_address",
-  "amount": "1.5",
+  "amount": "1.500000234",
   "transaction_id": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
+
+> **⚠️ Important - Unique Amount:** Notice the amount changed from "1.5" to "1.500000234". The system automatically adds a microscopic offset (derived from the transaction UUID) to ensure uniqueness. This prevents payment conflicts when multiple users create transactions with the same amount simultaneously.
+>
+> **How it works:**
+> - Original amount: `1.5` NANO
+> - Unique offset: `0.000000234` (max 0.000001 NANO)
+> - Final amount: `1.500000234` NANO
+>
+> **Why?** If two AI agents request payment for "1 NANO" at the same time, the blockchain can distinguish between them (1.000000123 vs 1.000000456). This enables accurate payment matching without conflicts.
+>
+> **Use the returned amount:** Always use the `amount` value from the response when paying or checking status, not your original requested amount.
 
 **cURL Example:**
 ```bash
@@ -608,9 +619,11 @@ Process payment for a previously created transaction using encrypted wallet cred
   "transaction_id": "550e8400-e29b-41d4-a716-446655440000",
   "encrypted_wallet_string": "your_encrypted_wallet_data",
   "password": "your_password",
-  "amount": "1.5"
+  "amount": "1.500000234"
 }
 ```
+
+**⚠️ Critical:** The `amount` must match the **exact unique amount** returned during transaction creation (e.g., "1.500000234"), not your original requested amount ("1.5"). This ensures payment goes to the correct transaction.
 
 **Response:**
 ```json
@@ -618,7 +631,7 @@ Process payment for a previously created transaction using encrypted wallet cred
   "success": "true",
   "transaction_id": "550e8400-e29b-41d4-a716-446655440000",
   "to_address": "nano_1your_server_address",
-  "amount": "1.5"
+  "amount": "1.500000234"
 }
 ```
 
@@ -652,12 +665,13 @@ curl -X POST https://api.x402nano.com/transaction/pay \
 ```json
 {
   "error": "amount_mismatch",
-  "message": "Amount does not match the created transaction amount. Amount should be 1.5."
+  "message": "Amount does not match the created transaction amount. Amount should be 1.500000234."
 }
 ```
 
 **Notes:**
-- Amount must exactly match the amount specified during creation
+- Amount must **exactly** match the unique amount returned from `/transaction/create` (e.g., "1.500000234")
+- Do not use your original requested amount ("1.5") - use the response value
 - Transaction must not be expired (< 60 minutes old)
 - Once paid, transaction is moved from pending to paid cache
 - Payment is irreversible

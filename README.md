@@ -50,6 +50,7 @@ Welcome to the x402 Nano API documentation. This API provides a secure, easy-to-
 
 ✅ **Payment Gateway** 🆕
 - Create payment transactions with unique IDs
+- **Unique amount generation** - Prevents conflicts with simultaneous identical payments
 - Webhook notifications for instant payment alerts
 - Metadata support for custom data (max 4KB JSON)
 - PostgreSQL persistence for audit trail
@@ -135,7 +136,8 @@ curl -X POST https://api.x402nano.com/transaction/create \
     "receive_address": "nano_your_server_address",
     "amount": "0.1"
   }'
-# Returns: {"transaction_id": "550e8400-...", "amount": "0.1", ...}
+# Returns: {"transaction_id": "550e8400-...", "amount": "0.100000234", ...}
+# Note: Amount is slightly modified (0.100000234) to ensure uniqueness
 
 # User pays transaction
 curl -X POST https://api.x402nano.com/transaction/pay \
@@ -144,8 +146,9 @@ curl -X POST https://api.x402nano.com/transaction/pay \
     "transaction_id": "550e8400-...",
     "encrypted_wallet_string": "YOUR_ENCRYPTED_WALLET",
     "password": "SecurePassword123!",
-    "amount": "0.1"
+    "amount": "0.100000234"
   }'
+# IMPORTANT: Use the exact amount from create response (0.100000234)
 
 # Check payment status (long-polling up to 30s)
 curl -X POST https://api.x402nano.com/transaction/status/550e8400-... \
