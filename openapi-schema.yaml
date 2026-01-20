@@ -340,6 +340,7 @@ paths:
             schema:
               type: object
               required:
+                - api_key
                 - receive_address
                 - amount
               properties:
