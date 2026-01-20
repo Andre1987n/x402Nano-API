@@ -46,7 +46,6 @@ paths:
               required:
                 - password
                 - password_confirmation
-                - api_key
               properties:
                 password:
                   type: string
@@ -61,10 +60,6 @@ paths:
                   format: email
                   description: Optional - Email address for wallet backup
                   example: user@example.com
-                api_key:
-                  type: string
-                  description: API key from /key/create
-                  example: CZtYHgn0Nk8KPvtlkwARjF+m601hC00pqYQwzXaKixU=
       responses:
         '200':
           description: Wallet created successfully
@@ -120,8 +115,6 @@ paths:
                     type: string
                   wallet_private_seed:
                     type: string
-                  ai_api_key:
-                    type: string
         '400':
           description: Invalid credentials
           content:
@@ -144,7 +137,6 @@ paths:
                 - private_wallet_seed
                 - password
                 - password_confirmation
-                - api_key
               properties:
                 private_wallet_seed:
                   type: string
@@ -152,8 +144,6 @@ paths:
                 password:
                   type: string
                 password_confirmation:
-                  type: string
-                api_key:
                   type: string
       responses:
         '200':
@@ -353,6 +343,9 @@ paths:
                 - receive_address
                 - amount
               properties:
+                api_key:
+                  type: string
+                  description: Your API key for authentication
                 receive_address:
                   type: string
                   description: Address to receive payment
@@ -361,7 +354,7 @@ paths:
                   type: string
                   description: Amount in NANO
                   example: "0.1"
-                callback_url:
+                webhook_url:
                   type: string
                   format: uri
                   description: Optional webhook URL for instant payment notifications

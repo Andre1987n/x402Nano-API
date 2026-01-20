@@ -133,6 +133,7 @@ curl -X POST https://api.x402nano.com/send \
 curl -X POST https://api.x402nano.com/transaction/create \
   -H "Content-Type: application/json" \
   -d '{
+    "api_key": "you_api_key",
     "receive_address": "nano_your_server_address",
     "amount": "0.1"
   }'

@@ -27,7 +27,7 @@ curl -X POST https://api.x402nano.com/transaction/create \
   -d '{
     "receive_address": "nano_1your_server_address",
     "amount": "1.5",
-    "callback_url": "https://yoursite.com/webhook",
+    "webhook_url": "https://yoursite.com/webhook",
     "metadata": "{\"order_id\":\"ORD-123\",\"customer\":\"user@example.com\"}"
   }'
 ```
@@ -43,7 +43,7 @@ curl -X POST https://api.x402nano.com/transaction/create \
 
 ### 2. Implement Webhook Endpoint
 
-Your server must respond to POST requests at the `callback_url`:
+Your server must respond to POST requests at the `webhook_url`:
 
 ```python
 from flask import Flask, request
@@ -337,7 +337,7 @@ curl -X POST https://api.x402nano.com/transaction/create \
   -d '{
     "receive_address": "nano_...",
     "amount": "0.01",
-    "callback_url": "https://abc123.ngrok.io/webhook"
+    "webhook_url": "https://abc123.ngrok.io/webhook"
   }'
 ```
 
@@ -349,7 +349,7 @@ For quick testing without running a server:
 
 1. Go to https://webhook.site
 2. Copy your unique URL (e.g., `https://webhook.site/abc-123`)
-3. Create transaction with that URL as `callback_url`
+3. Create transaction with that URL as `webhook_url`
 4. Pay the transaction
 5. View webhook payload in webhook.site interface
 
@@ -376,7 +376,7 @@ tail -f /var/log/your-app/webhook.log
 - SSL certificate expired
 - Endpoint returns non-200 status code
 - Timeout (> 10 seconds to respond)
-- Wrong URL (typo in callback_url)
+- Wrong URL (typo in webhook_url)
 
 ### Multiple Webhooks Received
 

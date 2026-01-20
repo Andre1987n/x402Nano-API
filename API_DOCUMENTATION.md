@@ -139,12 +139,8 @@ Create a new Nano wallet with password encryption.
   "password": "your_secure_password",
   "password_confirmation": "your_secure_password",
   "email": "your_email@example.com",
-  "api_key": "your_api_key"
 }
 ```
-
-**Required Fields:**
-- `api_key` **(REQUIRED)** - Must be exactly 44 characters. Get one from [Create AI API Key](#1-create-ai-api-key)
 
 **Password Requirements:**
 - Must contain at least one uppercase letter
@@ -173,7 +169,6 @@ curl -X POST https://api.x402nano.com/wallet/create \
     "password": "MySecurePassword123!",
     "password_confirmation": "MySecurePassword123!",
     "email": "your_email@example.com",
-    "api_key": "your_api_key_here"
   }'
 ```
 
@@ -207,12 +202,10 @@ Import an existing Nano wallet using a private seed.
   "private_wallet_seed": "64_character_hex_seed",
   "password": "your_secure_password",
   "password_confirmation": "your_secure_password",
-  "api_key": "your_api_key"
 }
 ```
 
 **Required Fields:**
-- `api_key` **(REQUIRED)** - Must be exactly 44 characters. Get one from [Create AI API Key](#1-create-ai-api-key)
 - `private_wallet_seed` - Must be exactly 64 characters (hex)
 
 **Response:**
@@ -232,7 +225,6 @@ curl -X POST https://api.x402nano.com/wallet/import \
     "private_wallet_seed": "your_64_char_seed_here",
     "password": "MySecurePassword123!",
     "password_confirmation": "MySecurePassword123!",
-    "api_key": "your_api_key_here"
   }'
 ```
 
@@ -269,7 +261,6 @@ Decrypt and unlock a wallet for transaction operations.
   "public_key": "86E1D5EC69975543A513823A6C102CC8D9A039646327D4849642AAB07AD9E64C",
   "private_key": "F70D98B3E23FEA69BD7C41D2BBFA131038A85553CB423C0D4B820DC8F2618CFE",
   "wallet_private_seed": "0D09063E701AD0792CFD92D2A218BB3A70FE7504FD7392E42DFBA80859BC3BE5",
-  "ai_api_key": "CZtYHgn0Nk8KPvtlkwARjF+m601hC00pqYQwzXaKixU="
 }
 ```
 
@@ -288,7 +279,6 @@ curl -X POST https://api.x402nano.com/wallet/unlock \
 **Notes:**
 - Use this endpoint after creating or importing a wallet to get your address
 - The response contains your private keys - keep this information secure
-- The `ai_api_key` field shows the API key used to create this wallet
 
 ---
 
@@ -533,7 +523,7 @@ Invoke-RestMethod -Uri "https://api.x402nano.com/donate" `
 
 Create a temporary payment transaction for users to pay. Returns a unique transaction ID and payment details that expire after 60 minutes.
 
-**NEW in v0.2.0:** Optional `callback_url` for webhook notifications and `metadata` for custom data.
+**NEW in v0.2.0:** Optional `webhook_url` for webhook notifications and `metadata` for custom data.
 
 **Endpoint:** `POST /transaction/create`
 
@@ -549,15 +539,16 @@ Create a temporary payment transaction for users to pay. Returns a unique transa
 {
   "receive_address": "nano_1your_server_address",
   "amount": "1.5",
-  "callback_url": "https://yoursite.com/webhook",
+  "webhook_url": "https://yoursite.com/webhook",
   "metadata": "{\"order_id\":\"ORD-123\",\"customer\":\"user@example.com\"}"
 }
 ```
 
 **Fields:**
+- `api_key` (required) - Your Api key
 - `receive_address` (required) - Your Nano address to receive payment
 - `amount` (required) - Amount in Nano (e.g., "1.5")
-- `callback_url` (optional) - Your webhook URL for instant payment notifications
+- `webhook_url` (optional) - Your webhook URL for instant payment notifications
 - `metadata` (optional) - JSON string with custom data (max 4KB, must be valid JSON)
 
 **Response:**
@@ -790,7 +781,6 @@ This approach ensures:
 - `"rpc_error"` - Nano node RPC call failed (includes detailed context)
 - `"rpc_response_parse_failed"` - Failed to parse RPC response (includes parse details)
 - `"database_error"` - Database operation failed
-- `"invalid_api_key"` - API key is invalid or missing (required for wallet operations)
 
 ---
 
@@ -869,7 +859,7 @@ def create_api_key():
     
     return response.text  # Returns plain text API key
 
-def create_wallet(api_key, password):
+def create_wallet(password):
     headers = {
         "Content-Type": "application/json"
     }
@@ -877,7 +867,6 @@ def create_wallet(api_key, password):
     data = {
         "password": password,
         "password_confirmation": password,
-        "api_key": api_key
     }
     
     response = requests.post(
@@ -973,7 +962,6 @@ async function createWallet(apiKey, password) {
     const data = {
         password: password,
         password_confirmation: password,
-        api_key: apiKey
     };
     
     const response = await axios.post(
@@ -1075,13 +1063,14 @@ Webhooks provide instant push notifications when transactions are paid. Instead 
 
 ### Setup
 
-1. **Create transaction with callback_url:**
+1. **Create transaction with webhook_url:**
 ```json
 POST /transaction/create
 {
+  "api_key": "your_api_key",
   "receive_address": "nano_...",
   "amount": "1.5",
-  "callback_url": "https://yoursite.com/webhook"
+  "webhook_url": "https://yoursite.com/webhook"
 }
 ```
 
@@ -1197,6 +1186,7 @@ Metadata allows you to attach custom JSON data to transactions. This is perfect 
 ```json
 POST /transaction/create
 {
+  "api_key": "your_api_key",
   "receive_address": "nano_...",
   "amount": "1.5",
   "metadata": "{\"order_id\":\"ORD-123\",\"customer\":\"user@example.com\",\"items\":[\"License\",\"Support\"]}"

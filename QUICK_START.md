@@ -54,7 +54,6 @@ curl -X POST https://api.x402nano.com/wallet/create \
     "password": "YourSecurePassword123!",
     "password_confirmation": "YourSecurePassword123!",
     "email": "your_email@example.com",
-    "api_key": "your_api_key_from_step_1"
   }'
 ```
 
@@ -99,7 +98,6 @@ curl -X POST https://api.x402nano.com/wallet/unlock \
   "public_key": "86E1D5EC...",
   "private_key": "F70D98B3...",
   "wallet_private_seed": "0D09063E...",
-  "ai_api_key": "CZtYHgn0..."
 }
 ```
 
@@ -229,7 +227,6 @@ curl -X POST https://api.x402nano.com/donate \
 
 Create a Postman collection with these variables:
 - `base_url`: `https://api.x402nano.com`
-- `api_key`: Your API key
 - `encrypted_wallet`: Your encrypted wallet string
 - `password`: Your wallet password
 
@@ -244,7 +241,6 @@ Body:
 {
   "password": "{{password}}",
   "password_confirmation": "{{password}}",
-  "api_key": "{{api_key}}"
 }
 ```
 
@@ -271,7 +267,6 @@ response = requests.post(
     json={
         "password": "SecurePass123!",
         "password_confirmation": "SecurePass123!",
-        "api_key": api_key
     }
 )
 encrypted_wallet = response.text  # Plain text response
@@ -322,7 +317,6 @@ async function quickStart() {
         {
             password: 'SecurePass123!',
             password_confirmation: 'SecurePass123!',
-            api_key: apiKey
         },
         { headers: { 'Content-Type': 'application/json' } }
     );
